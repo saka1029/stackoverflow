@@ -31,40 +31,21 @@ public class TestStackoverflow {
     }
 
 
-    // public static void main(String... args) {
-    // Set<Integer> a_few = Stream.of(1, 2, 3).collect(Collectors.toSet());
-    // Set<Function<Integer, Integer>> bijections = bijectionsOf(a_few);
-    // bijections.forEach(aBijection -> {
-    // a_few.forEach(n -> System.out.printf("%d --> %d; ", n, aBijection.apply(n)));
-    // System.out.println();
-    // });
-    // }
+    public static void main(String... args) {
+        Set<Integer> a_few = Stream.of(1, 2, 3).collect(Collectors.toSet());
+        Set<Function<Integer, Integer>> bijections = bijectionsOf(a_few);
+        bijections.forEach(aBijection -> {
+            a_few.forEach(n -> System.out.printf("%d --> %d; ", n, aBijection.apply(n)));
+            System.out.println();
+        });
+    }
 
     public static <T> Set<Function<T, T>> bijectionsOf(Set<T> set) {
         ArrayList<T> domain = new ArrayList<>(set);
-        return permutations(domain, new ArrayList<>(), set.size(), 0)
-            .stream()
-            .map(list -> (Function<T, T>) t -> list.get(domain.indexOf(t)))
-            .collect(Collectors.toSet());
+        return permutations(domain, new ArrayList<>(), set.size(), 0).stream()
+                .map(list -> (Function<T, T>) t -> list.get(domain.indexOf(t)))
+                .collect(Collectors.toSet());
     }
-
-    /*
-    1 --> 3; 2 --> 1; 3 --> 2; 
-    1 --> 2; 2 --> 1; 3 --> 3; 
-    1 --> 2; 2 --> 3; 3 --> 1; 
-    1 --> 3; 2 --> 2; 3 --> 1; 
-    1 --> 1; 2 --> 2; 3 --> 3; 
-    1 --> 1; 2 --> 3; 3 --> 2; 
-    */
-    /*
-    1 --> 1; 2 --> 3; 3 --> 2;
-    1 --> 3; 2 --> 2; 3 --> 1;
-    1 --> 2; 2 --> 1; 3 --> 3;
-    1 --> 3; 2 --> 1; 3 --> 2;
-    1 --> 1; 2 --> 2; 3 --> 3;
-    1 --> 2; 2 --> 3; 3 --> 1;
-    */
-
 
     @Test
     public void testMain() {
@@ -74,17 +55,5 @@ public class TestStackoverflow {
             a_few.forEach(n -> System.out.printf("%d --> %d; ", n, aBijection.apply(n)));
             System.out.println();
         });
-    }
-
-    @Test
-    public void test() {
-        ArrayList<Integer> domain = new ArrayList<>();
-        domain.add(1);
-        domain.add(2);
-        domain.add(3);
-        ArrayList<ArrayList<Integer>> perms = new ArrayList<>();
-        System.out.println(permutations(domain, perms, 3, 0));
-        System.out.println(permutations(domain));
-        System.out.println("テスト結果");
     }
 }
