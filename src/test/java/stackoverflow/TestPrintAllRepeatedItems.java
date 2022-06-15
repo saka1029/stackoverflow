@@ -29,11 +29,8 @@ public class TestPrintAllRepeatedItems {
 
 	}
 
-	record In(String col1, String col2, String col3, String col4) {
-	}
-
-	record Out(String col1, String col2, String col2Agg, String col3, String col3Agg, String col4) {
-	}
+	record In(String col1, String col2, String col3, String col4) {}
+	record Out(String col1, String col2, String col2Agg, String col3, String col3Agg, String col4) {}
 
 	public static void main(String[] args) {
 		List<In> list = List.of(
