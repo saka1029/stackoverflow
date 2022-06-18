@@ -59,19 +59,4 @@ public class TestAST {
 		AST f = new Mult(new Plus(new Var("a"), new Var("b")), new Plus(new Var("c"), new Var("d")));
 		System.out.println(f + " -> " + f.expand());
 	}
-
-	public static List<List<Object>> zip(List<Object> ...lists){
-		if(Stream.of(lists).anyMatch(Objects::isNull)) return Collections.emptyList(); // ガード節
-
-		int minSize =  Stream.of(lists).mapToInt(List::size).min().orElse(0);
-
-		return IntStream.range(0, minSize)
-				.mapToObj(i -> Stream.of(lists).map(l::get).toList()) // i番目の要素を配列にまとめる
-				.toList();
-	}
-	@Test
-	public void test2() {
-		System.out.println(zip(List.of(1, 2, 3), List.of("a", "b", "c"), List.of(100L, 200L, 300L)));
-	}
-
 }
