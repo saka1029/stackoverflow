@@ -139,7 +139,7 @@ public class TestStack {
 	@Test
 	public void testIfThenBlock() {
 		Context c = new Context();
-		Block block = block(i(1), block(i(2)), block(i(3)), IF);
+		Block block = block(i(1), block(i(4), i(2), MINUS), block(i(3), i(3), PLUS), IF);
 		block.execute(c);
 		Executable result = c.pop();
 		assertEquals(0, c.sp);
