@@ -17,8 +17,11 @@ public class TestRoman {
 
     public static int convertRomanToInteger(String roman) {
         int r = 0, c = 0, n;
-        for (int i = 0, m = roman.length(); i < m; ++i, c = n)
-            r += c >= (n = ROMANS.get(roman.charAt(i))) ? c : -c;
+        for (char ch : roman.toCharArray()) {
+            n = ROMANS.get(ch);
+            r += c >= n ? c : -c;
+            c = n;
+        }
         return r + c;
     }
 
