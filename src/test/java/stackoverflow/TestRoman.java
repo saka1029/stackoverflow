@@ -16,13 +16,13 @@ public class TestRoman {
         'I', 1, 'V', 5, 'X', 10, 'L', 50, 'C', 100, 'D', 500, 'M', 1000);
 
     public static int convertRomanToInteger(String roman) {
-        int r = 0, c = 0, n;
+        int result = 0, cur = 0;
         for (char ch : roman.toCharArray()) {
-            n = ROMANS.get(ch);
-            r += c >= n ? c : -c;
-            c = n;
+            int next = ROMANS.get(ch);
+            result += cur >= next ? cur : -cur;
+            cur = next;
         }
-        return r + c;
+        return result + cur;
     }
 
     @Test
