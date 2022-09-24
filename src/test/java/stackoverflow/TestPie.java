@@ -76,7 +76,7 @@ public class TestPie {
                 mapping(LineItem::getAmount,
                     collectingAndThen(
                         reducing(BigDecimal.ZERO, BigDecimal::add),
-                        PieSlice::nejw))));
+                        PieSlice::new))));
     sliceMap.entrySet().stream()
         .forEach(System.out::println);
 }
