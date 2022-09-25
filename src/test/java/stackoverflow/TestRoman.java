@@ -3,6 +3,7 @@ package stackoverflow;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Map;
 
 import org.jsoup.Jsoup;
@@ -47,5 +48,19 @@ public class TestRoman {
         assertEquals(18, convertRomanToInteger("XVIII"));
         assertEquals(19, convertRomanToInteger("XIX"));
         assertEquals(1994, convertRomanToInteger("MCMXCIV"));
+    }
+
+    public static void sortedlist(int[] l, int r) {
+        for (int i = 0, max = l.length; i < max; ++i)
+            if (l[i] >= 0)
+                for (int j = i + 1; j < max && j <= i + r; ++j)
+                    l[i] += l[j];
+    }
+    
+    @Test
+    public void testContains() {
+        int[] a = {1, 2, -3, 4, 5, 4};
+        sortedlist(a, 3);
+        System.out.println(Arrays.toString(a));
     }
 }
