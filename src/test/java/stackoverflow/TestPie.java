@@ -1,172 +1,82 @@
 package stackoverflow;
 
-import static org.junit.Assert.*;
-
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import static java.util.stream.Collectors.*;
 
 import org.junit.Test;
 
 public class TestPie {
 
-    public enum Category {
-        Thing,
-        Thang,
-        Fizz
-    }
-
-//    @Data // using lombok to generate ctors/getters/setters/etc.
-    public class LineItem {
-
-        @Override
-        public String toString() {
-            return "LineItem [category=" + category + ", amount=" + amount + "]";
+    public static List<List<Integer>> rotate(List<List<Integer>> matrix, int n) {
+//        matrix.forEach(row -> {
+            for (int i = 0, j = n - 1; i < j; i++, j--)
+                swap(matrix, i, matrix, j);
+//        });
+        for (int i = 0, j = n - 1; i < n; i++, j--) {
+            for (int ii = i, jj = j, k = 0, l = n - 1; ii >= 0; ii--, jj++, k++, l--) {
+                List<Integer> rowSrc = matrix.get(ii);
+                List<Integer> rowDest = matrix.get(l);
+                swap(rowSrc, k, rowDest, jj);
+            }
         }
-
-        private Long id;
-        private String name;
-        private Category category;
-        private BigDecimal amount;
-
-        public Category getCategory() {
-            return category;
-        }
-
-        public BigDecimal getAmount() {
-            return amount;
-        }
-
-        LineItem(Long id, String name, Category category, BigDecimal amount) {
-            this.id = id;
-            this.name = name;
-            this.category = category;
-            this.amount = amount;
-        }
-
+        return matrix;
     }
 
-//    @Data
-    public class PieSlice {
-
-        @Override
-        public String toString() {
-            return "PieSlice [label=" + label + ", value=" + value + "]";
-        }
-
-        private String label;
-        private BigDecimal value = BigDecimal.ZERO;
-
-        PieSlice() {
-        }
-
-        PieSlice(BigDecimal value) {
-            this.value = value;
-        }
-
-        public void addAmount(BigDecimal amount) {
-            value = value.add(amount);
-        }
-
+    private static <T> void swap(List<T> one, int i, List<T> two, int j) {
+        T tmp = one.get(i);
+        one.set(i, two.get(j));
+        two.set(j, tmp);
     }
-
-//    @Test
-    public void test() {
-        List<LineItem> lineItems = List.of(
-            new LineItem(1L, "", Category.Thing, BigDecimal.valueOf(100)),
-            new LineItem(2L, "", Category.Thang, BigDecimal.valueOf(200)),
-            new LineItem(3L, "", Category.Fizz, BigDecimal.valueOf(300)),
-            new LineItem(4L, "", Category.Thing, BigDecimal.valueOf(400)));
-        Map<Category, PieSlice> sliceMap = lineItems.stream()
-            .collect(
-                groupingBy(LineItem::getCategory,
-                    mapping(LineItem::getAmount,
-                        collectingAndThen(
-                            reducing(BigDecimal.ZERO, BigDecimal::add),
-                            PieSlice::new))));
-        sliceMap.entrySet().stream()
-            .forEach(System.out::println);
+    
+    @Test
+    public void testSwap() {
+        List<List<Integer>> m = Arrays.asList(
+            Arrays.asList(1, 2, 3),
+            Arrays.asList(4, 5, 6),
+            Arrays.asList(7, 8, 9)
+        );
+        rotate(m, 3);
+        for (List<Integer> row : m)
+            System.out.println(row);
     }
-
-//@Test
-    public void testSum() {
-        List<BigDecimal> list = List.of(
-            BigDecimal.valueOf(1),
-            BigDecimal.valueOf(2),
-            BigDecimal.valueOf(3),
-            BigDecimal.valueOf(4));
-        var sum = list.stream()
-            .reduce(BigDecimal.ZERO, BigDecimal::add);
-        System.out.println(sum);
+    
+    @Test
+    public void testSwap2() {
+        List<List<Integer>> m = Arrays.asList(
+            Arrays.asList(1, 2),
+            Arrays.asList(3, 4)
+        );
+        rotate(m, 2);
+        for (List<Integer> row : m)
+            System.out.println(row);
     }
-
-    record Node<E> (E getData, Node<E> getLeft, Node<E> getRight) {
-    }
-
-    static <E> void inrec(Node<E> root, String prefix, String suffix) {
-        if (root == null)
-            return;
-        System.out.print(prefix);
-        inrec(root.getLeft(), "", " ");
-        System.out.print(root.getData());
-        inrec(root.getRight(), " ", "");
-        System.out.print(suffix);
-    }
-
-    static void add(Map<String, Set<String>> map, String key, String value) {
-        map.computeIfAbsent(key, k -> new HashSet<>()).add(value);
-    }
-
-    static Pattern PAT = Pattern.compile("\\$");
-
-    static String replaceWords(String s, String[] stickers) {
-        Iterator<String> it = Arrays.stream(stickers).iterator();
-        return PAT.matcher(s).replaceAll(m -> it.next());
-    }
-
-    private static final byte[] HEX_ARRAY = "0123456789ABCDEF".getBytes(StandardCharsets.US_ASCII);
-    public static String bytesToHex(byte[] bytes) {
-        byte[] hexChars = new byte[bytes.length * 2];
-        for (int j = 0; j < bytes.length; j++) {
-            int v = bytes[j] & 0xFF;
-            hexChars[j * 2] = HEX_ARRAY[v >>> 4];
-            hexChars[j * 2 + 1] = HEX_ARRAY[v & 0x0F];
-        }
-        return new String(hexChars, StandardCharsets.UTF_8);
-    }
-
-    public static void displayHours(byte[] hours) {
-        final String[] DAYS = DateFormatSymbols.getInstance().getWeekdays();    
-        BigInteger bi = new BigInteger(hours);
-        
-        for (int day = 1; day <= 7; day++) {
-            System.out.printf("Hours allowed for %s%n", DAYS[day]);
-            for (int hour = 0; hour <= 24; hour++) {
-                int bit = day * 7 + hour;
-                boolean allowed = bi.testBit(bit);
-                System.out.printf("\tLogin permitted for hour %d?: %b%n", hour, allowed);
+    
+    static <T> void rotate90Clockwise(List<List<T>> a) {
+        int n = a.size();
+        for (int i = 0, mi = n / 2, ni = n - 1; i < mi; i++, ni--) {
+            for (int j = i, mj = n - i - 1, nj = mj; j < mj; j++, nj--) {
+                System.out.println("i=" + i + " mi=" + mi + " ni=" + ni + " j=" + j + " mj=" + mj + " nj=" + nj);
+                T temp = a.get(i).get(j);
+                a.get(i).set(j, a.get(nj).get(i));
+                a.get(nj).set(i, a.get(ni).get(nj));
+                a.get(ni).set(nj, a.get(j).get(ni));
+                a.get(j).set(ni, temp);
             }
         }
     }
-    @Test
-    public void testFoo() {
-        byte[] hours = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, -1}; 
-        System.out.println("size=" + hours.length);
-        System.out.println(bytesToHex(hours));
-        displayHours(hours);
-    }
 
+    @Test
+    public void testCopy() {
+        List<List<Integer>> m = Arrays.asList(
+            Arrays.asList(1, 2, 3),
+            Arrays.asList(4, 5, 6),
+            Arrays.asList(7, 8, 9)
+        );
+        rotate90Clockwise(m);
+        for (List<Integer> r : m)
+            System.out.println(r);
+    }
 }

@@ -44,41 +44,45 @@ public class TestJackson {
         }
     }
 
-    static final TypeReference<HashMap<String, Integer>> TYPEREF_MAP = new TypeReference<HashMap<String, Integer>>() {
-    };
+    static final TypeReference<HashMap<String, Integer>> TYPEREF_MAP =
+        new TypeReference<HashMap<String, Integer>>() {};
 
-    static final Map<String, String> ITEM_VALUES0 = Map.of(
+    static final Map<String, String> ITEM_VALUES = Map.of(
         "k1", "{\"key1\":1,\"key2\":2}",
         "k2", "{\"key1\":3,\"key2\":4}");
+
+    static final HashMap<String, Integer> FAILED_MAP = new HashMap<>();
 
     static HashMap<String, Integer> toMap(String s) {
         try {
             return new ObjectMapper().readValue(s, TYPEREF_MAP);
         } catch (JsonProcessingException e) {
-            return new HashMap<>();
+            return FAILED_MAP;
         }
     }
 
-    public static List<Item> getItems0() {
-        return ITEM_VALUES0.entrySet().stream()
+    public static List<Item> getItems() {
+        return ITEM_VALUES.entrySet().stream()
             .map(entry -> new Item(entry.getKey(), toMap(entry.getValue())))
+            .filter(item -> item.getValues() != FAILED_MAP)
             .collect(Collectors.toList());
     }
 
-//    @Test
+    @Test
     public void test() {
-        System.out.println(getItems0());
+        System.out.println(getItems());
     }
 
-    static final String ITEM_VALUES = "[{\"key\":\"k1\", \"values\":{\"key1\":1,\"key2\":2}},"
-        + "{\"key\":\"k2\", \"values\":{\"key1\":3,\"key2\":4}}]";
-
-    static final TypeReference<List<Item>> TYPEREF_LIST_ITEM = new TypeReference<List<Item>>() {
-    };
-
-    public static List<Item> getItems() throws JsonMappingException, JsonProcessingException {
-        return new ObjectMapper().readValue(ITEM_VALUES, TYPEREF_LIST_ITEM);
-    }
+//    static final String ITEM_VALUES =
+//        "[{\"key\":\"k1\", \"values\":{\"key1\":1,\"key2\":2}},"
+//        + "{\"key\":\"k2\", \"values\":{\"key1\":3,\"key2\":4}}]";
+//
+//    static final TypeReference<List<Item>> TYPEREF_LIST_ITEM = new TypeReference<List<Item>>() {
+//    };
+//
+//    public static List<Item> getItems() throws JsonMappingException, JsonProcessingException {
+//        return new ObjectMapper().readValue(ITEM_VALUES, TYPEREF_LIST_ITEM);
+//    }
 
 //    @Test
     public void testJso() throws JsonMappingException, JsonProcessingException {
@@ -90,12 +94,13 @@ public class TestJackson {
         @JsonProperty("Identifier") String identifier) {
     }
 
-    public record CarrierABCStatusUpdateRecord(@JsonProperty("Timestamp") String timeStamp,
+    public record CarrierABCStatusUpdateRecord(
+        @JsonProperty("Timestamp") String timeStamp,
         @JsonProperty("Agent") String agent,
         @JsonProperty("AgentDevice") String agentDevice,
         @JsonProperty("Trace") String trace,
         @JsonProperty("Consignment") String consignment,
-//        @JsonProperty("Items") String items,
+    //  @JsonProperty("Items") String items,
         @JsonProperty("Items") Map<String, TypeIdentifier> items,
         @JsonProperty("FreightHandler") String freightHandler,
         @JsonProperty("Signature") String signature,
@@ -103,7 +108,7 @@ public class TestJackson {
         @JsonProperty("Depot") String depot) {
     }
 
-    @Test
+//    @Test
     public void testMap() throws JsonMappingException, JsonProcessingException {
         String s = "{\r\n"
             + "    \"Timestamp\": \"2022-09-15T08:35:15\",\r\n"
@@ -134,6 +139,18 @@ public class TestJackson {
         CarrierABCStatusUpdateRecord r = new ObjectMapper().readValue(s,
             new TypeReference<CarrierABCStatusUpdateRecord>() {});
         System.out.println(r);
+    }
+    
+    @Test
+    public void foo() {
+        int userInput = 550;
+        int num = 0;
+        while(num <= userInput){
+            num++;
+            if(num % 100 == 0) {
+                  System.out.print("*");
+            }
+        }
     }
 
 }
