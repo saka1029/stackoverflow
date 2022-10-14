@@ -132,7 +132,7 @@ public class TestPie {
         }
         return count;
     }
-    
+
     public static int tripletSumSimple(int[] arr, int num) {
         int n = arr.length;
         int count = 0;
@@ -146,35 +146,36 @@ public class TestPie {
         }
         return count;
     }
-    
-    
+
     static int tripletSumMap(int[] arr, int num) {
+        int size = arr.length;
+        Arrays.sort(arr);
         Map<Integer, Integer> map = new TreeMap<>();
         for (int i : arr)
             map.compute(i, (k, v) -> v == null ? 1 : v + 1);
-        int size = map.size(), elements[] = new int[size], counts[] = new int[size];
-        int p = 0;
-        for (Entry<Integer, Integer> e : map.entrySet()) {
-            elements[p] = e.getKey();
-            counts[p] = e.getValue();
-            ++p;
-        }
-        int count = 0;
-        for (int i = 0; i < size - 2; ++i) {
-            int sum = num - elements[i];
-            for (int j = i + 1, k = size - 1; j < k;) {
-                int ej = elements[j], ek = elements[k], sum2 = ej + ek;
-                if (sum2 == sum) {
-                    count += counts[i] * counts[j] * counts[k];
-                    k--;
-                } else if (sum2 > sum) {
-                    k--;
-                } else {
-                    j++;
+        return new Object() {
+            int find() {
+                int count = 0;
+                for (int i = 0; i < size - 2; i++) {
+                    int sum = num - arr[i];
+                    for (int j = i + 1, k = size - 1; j < k;) {
+                        int ej = arr[j], ek = arr[k], ejk = ej + ek;
+                        if (ejk == sum) {
+                            if (ej == ek)
+                                count += (k - j + 1) * (k - j) / 2;
+                            else
+                                count++;
+                            k--;
+                        } else if (ejk > sum) {
+                            k--;
+                        } else {
+                            j++;
+                        }
+                    }
                 }
+                return count;
             }
-        }
-        return count;
+        }.find();
     }
 
     static void testTripletSum(int[] arr, int num) {
