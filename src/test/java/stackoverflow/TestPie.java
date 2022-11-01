@@ -1,46 +1,52 @@
 package stackoverflow;
 
-import static org.junit.Assert.assertEquals;
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 import org.junit.Test;
 
 public class TestPie {
 
-    public List<List<Integer>> getAscendingSequences(List<Integer> numbers) {
-        List<List<Integer>> results = new ArrayList<>();
-        List<Integer> longestArray = new ArrayList<>();
-        List<Integer> currentArray = new ArrayList<>();
-        for (int i = 1; i < numbers.size(); i++) {
-            if (currentArray.isEmpty()) {
-                currentArray.add(numbers.get(i - 1));
-            }
-            if (numbers.get(i) > numbers.get(i - 1)) {
-                currentArray.add(numbers.get(i));
-            } else {
-                if (longestArray.size() < currentArray.size()) {
-                    longestArray.clear();
-                    longestArray.addAll(currentArray);
-                }
-                currentArray.clear();
-            }
-        }
-        results.add(longestArray);
-        return results;
-    }
-    
+    Connection connection;
+
     @Test
-    public void test() {
-        var list = getAscendingSequences(List.of(1,2,1,3,7,1,2,3));
-        System.out.println(list);
+    public void testCreate() throws SQLException {
+        try (Connection c = DriverManager.getConnection("jdbc:sqlite:test.db")) {
+            connection = c;
+            System.out.println(listMutualFollowers(1));
+        }
+//            Statement st = connection.createStatement();
+//            st.execute("drop table if exists followers");
+//            st.execute("create table followers (id_user int, id_follower int)");
+//            st.executeUpdate("insert into followers values (1, 2)");
+//            st.executeUpdate("insert into followers values (1, 3)");
+//            st.executeUpdate("insert into followers values (1, 4)");
+//            st.executeUpdate("insert into followers values (3, 1)");
+    }
+
+    public List<Integer> listMutualFollowers(int id_user) {
+        List<Integer> result = new ArrayList<Integer>();
+        String query = 
+            "select id_follower from followers a"
+            + "  where id_user = ? and id_user in"
+            + "    (select id_follower from followers b"
+            + "        where b.id_user = a.id_follower)";
+        try (PreparedStatement ps = connection.prepareStatement(query)) {
+            ps.setInt(1, id_user);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next())
+                    result.add(rs.getInt(1));
+                return result;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
