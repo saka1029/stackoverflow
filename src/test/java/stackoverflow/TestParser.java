@@ -114,8 +114,9 @@ public class TestParser {
                     get();
                 } while (Character.isLetterOrDigit(ch));
                 String name = source.substring(start, index);
-                if (!eat(':') || !eat('='))
+                if (!eat(':') || ch != '=')
                     throw new RuntimeException("':=' expected");
+                get();
                 variables.put(name, expression());
             }
 
